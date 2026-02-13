@@ -91,7 +91,7 @@ in
 
       # For audio
       boot.kernelParams = [
-        "pcie_ports=compat"
+        "pcie_ports=native"
         "intel_iommu=on"
         "iommu=pt"
       ];
