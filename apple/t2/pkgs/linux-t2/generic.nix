@@ -7,6 +7,7 @@
 {
   kernel,
   patchesFile,
+  experimental ? false,
 }:
 let
   inherit (builtins) readFile fromJSON;
@@ -22,11 +23,21 @@ let
       };
     }
   ) patchset.patches;
+  resume-patch = {
+    name = "sleep/resume fix for t2 linux";
+    patch = ./apple-bce-sleep.patch;
+  };
+  hid-resume-patch = {
+    name = "apple kbd resume patch";
+    patch = ./hid-appletb-kdb-resume.patch;
+  };
 in
 kernel.override (
   args
   // {
     pname = "linux-t2";
+
+    argsOverride.modDirVersion = "${kernel.modDirVersion}-t2";
 
     structuredExtraConfig = with lib.kernel; {
       APPLE_BCE = module;
@@ -45,10 +56,10 @@ kernel.override (
       HID_SENSOR_ALS = module;
       SND_PCM = module;
       STAGING = yes;
-      LOCALVERSION = "-t2";
+      LOCALVERSION = freeform "-t2";
     };
 
-    kernelPatches = t2-patches ++ (args.kernelPatches or [ ]);
+    kernelPatches = t2-patches ++ (args.kernelPatches or [ ]) ++ (if experimental then [resume-patch hid-resume-patch] else []);
 
     argsOverride.extraMeta = {
       description = "The Linux kernel (with patches from the T2 Linux project)";
