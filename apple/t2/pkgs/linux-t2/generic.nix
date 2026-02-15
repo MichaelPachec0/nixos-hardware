@@ -29,7 +29,7 @@ kernel.override (
     pname = "linux-t2";
 
     structuredExtraConfig = with lib.kernel; {
-      # APPLE_BCE = module;
+      APPLE_BCE = module;
       APPLE_GMUX = module;
       APFS_FS = module;
       BRCMFMAC = module;
@@ -45,6 +45,7 @@ kernel.override (
       HID_SENSOR_ALS = module;
       SND_PCM = module;
       STAGING = yes;
+      LOCALVERSION = "-t2";
     };
 
     kernelPatches = t2-patches ++ (args.kernelPatches or [ ]);
